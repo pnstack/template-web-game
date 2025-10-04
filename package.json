@@ -1,0 +1,29 @@
+{
+  "name": "template-web-game",
+  "version": "1.0.0",
+  "description": "Template for develop web game with Phaser 3, TypeScript and Vite",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "phaser",
+    "phaser3",
+    "typescript",
+    "vite",
+    "game",
+    "template"
+  ],
+  "author": "pnstack",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^24.6.2",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9"
+  },
+  "dependencies": {
+    "phaser": "^3.90.0"
+  }
+}
