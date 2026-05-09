@@ -4,6 +4,8 @@ const PANEL_WIDTH = 380;
 const PANEL_HEIGHT = 220;
 const PANEL_TEXT_X_OFFSET = 165;
 const PANEL_TEXT_Y_OFFSET = 85;
+const PANEL_OPACITY = 0.85;
+const FPS_UPDATE_INTERVAL_MS = 500;
 
 export class GameScene extends Phaser.Scene {
   private player?: Phaser.Physics.Arcade.Sprite;
@@ -116,7 +118,7 @@ export class GameScene extends Phaser.Scene {
       padding: { x: 8, y: 4 },
     }).setDepth(10);
 
-    this.settingsPanel = this.add.rectangle(0, 0, PANEL_WIDTH, PANEL_HEIGHT, 0x000000, 0.85);
+    this.settingsPanel = this.add.rectangle(0, 0, PANEL_WIDTH, PANEL_HEIGHT, 0x000000, PANEL_OPACITY);
     this.settingsText = this.add.text(0, 0, '', {
       fontSize: '18px',
       color: '#ffffff',
@@ -125,7 +127,7 @@ export class GameScene extends Phaser.Scene {
     });
     this.settingsContainer = this.add.container(0, 0, [this.settingsPanel, this.settingsText]).setDepth(20).setVisible(false);
 
-    this.inventoryPanel = this.add.rectangle(0, 0, PANEL_WIDTH, PANEL_HEIGHT, 0x000000, 0.85);
+    this.inventoryPanel = this.add.rectangle(0, 0, PANEL_WIDTH, PANEL_HEIGHT, 0x000000, PANEL_OPACITY);
     this.inventoryText = this.add.text(0, 0, 'Inventory\n\n[1] Sword\n[2] Shield\n[3] Potion x3\n[4] Empty\n[5] Empty', {
       fontSize: '18px',
       color: '#ffffff',
@@ -155,7 +157,7 @@ export class GameScene extends Phaser.Scene {
   update(time: number) {
     if (!this.player || !this.cursors) return;
 
-    if (this.fpsText && time - this.lastFpsUpdateTime >= 500) {
+    if (this.fpsText && time - this.lastFpsUpdateTime >= FPS_UPDATE_INTERVAL_MS) {
       this.fpsText.setText(`FPS: ${Math.round(this.game.loop.actualFps)}`);
       this.fpsText.setVisible(this.isFpsVisible);
       this.lastFpsUpdateTime = time;
