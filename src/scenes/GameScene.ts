@@ -1,5 +1,10 @@
 import Phaser from 'phaser';
 
+const PANEL_WIDTH = 380;
+const PANEL_HEIGHT = 220;
+const PANEL_TEXT_X_OFFSET = 165;
+const PANEL_TEXT_Y_OFFSET = 85;
+
 export class GameScene extends Phaser.Scene {
   private player?: Phaser.Physics.Arcade.Sprite;
   private cursors?: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -110,7 +115,7 @@ export class GameScene extends Phaser.Scene {
       padding: { x: 8, y: 4 },
     }).setDepth(10);
 
-    this.settingsPanel = this.add.rectangle(0, 0, 380, 220, 0x000000, 0.85);
+    this.settingsPanel = this.add.rectangle(0, 0, PANEL_WIDTH, PANEL_HEIGHT, 0x000000, 0.85);
     this.settingsText = this.add.text(0, 0, '', {
       fontSize: '18px',
       color: '#ffffff',
@@ -119,7 +124,7 @@ export class GameScene extends Phaser.Scene {
     });
     this.settingsContainer = this.add.container(0, 0, [this.settingsPanel, this.settingsText]).setDepth(20).setVisible(false);
 
-    this.inventoryPanel = this.add.rectangle(0, 0, 380, 220, 0x000000, 0.85);
+    this.inventoryPanel = this.add.rectangle(0, 0, PANEL_WIDTH, PANEL_HEIGHT, 0x000000, 0.85);
     this.inventoryText = this.add.text(0, 0, 'Inventory\n\n[1] Sword\n[2] Shield\n[3] Potion x3\n[4] Empty\n[5] Empty', {
       fontSize: '18px',
       color: '#ffffff',
@@ -229,9 +234,9 @@ export class GameScene extends Phaser.Scene {
     const height = this.scale.height;
     this.fpsText?.setPosition(width - 16, 16).setOrigin(1, 0);
     this.settingsPanel?.setPosition(width / 2, height / 2);
-    this.settingsText?.setPosition(width / 2 - 165, height / 2 - 85);
+    this.settingsText?.setPosition(width / 2 - PANEL_TEXT_X_OFFSET, height / 2 - PANEL_TEXT_Y_OFFSET);
     this.inventoryPanel?.setPosition(width / 2, height / 2);
-    this.inventoryText?.setPosition(width / 2 - 165, height / 2 - 85);
+    this.inventoryText?.setPosition(width / 2 - PANEL_TEXT_X_OFFSET, height / 2 - PANEL_TEXT_Y_OFFSET);
   }
 
   private updateSettingsText() {
