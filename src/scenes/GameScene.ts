@@ -226,8 +226,7 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  private handleResize(gameSize: Phaser.Structs.Size) {
-    void gameSize;
+  private handleResize(_gameSize: Phaser.Structs.Size) {
     this.layoutUi();
   }
 
@@ -242,9 +241,11 @@ export class GameScene extends Phaser.Scene {
   }
 
   private updateSettingsText() {
-    this.settingsText?.setText(
-      'Settings\n\n[F] Toggle Fullscreen: ' + (this.scale.isFullscreen ? 'On' : 'Off') + '\n[H] Show FPS: ' + (this.isFpsVisible ? 'On' : 'Off') + '\n[Esc] Close Menu'
-    );
+    this.settingsText?.setText(`Settings
+
+[F] Toggle Fullscreen: ${this.scale.isFullscreen ? 'On' : 'Off'}
+[H] Show FPS: ${this.isFpsVisible ? 'On' : 'Off'}
+[Esc] Close Menu`);
   }
 
   private updatePauseState() {
