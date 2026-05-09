@@ -24,6 +24,7 @@ export class GameScene extends Phaser.Scene {
   private inventoryKey?: Phaser.Input.Keyboard.Key;
   private fullscreenKey?: Phaser.Input.Keyboard.Key;
   private fpsToggleKey?: Phaser.Input.Keyboard.Key;
+  private lastFpsUpdateTime = 0;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -151,26 +152,27 @@ export class GameScene extends Phaser.Scene {
     this.scale.on('resize', this.handleResize, this);
   }
 
-  update() {
+  update(time: number) {
     if (!this.player || !this.cursors) return;
 
-    if (this.fpsText) {
+    if (this.fpsText && time - this.lastFpsUpdateTime >= 500) {
       this.fpsText.setText(`FPS: ${Math.round(this.game.loop.actualFps)}`);
       this.fpsText.setVisible(this.isFpsVisible);
+      this.lastFpsUpdateTime = time;
     }
 
     if (this.menuKey && Phaser.Input.Keyboard.JustDown(this.menuKey)) {
       const isVisible = !(this.settingsContainer?.visible ?? false);
       this.settingsContainer?.setVisible(isVisible);
       if (isVisible) this.inventoryContainer?.setVisible(false);
-      this.physics.world.isPaused = isVisible;
+      this.updatePauseState();
     }
 
     if (this.inventoryKey && Phaser.Input.Keyboard.JustDown(this.inventoryKey)) {
       const isVisible = !(this.inventoryContainer?.visible ?? false);
       this.inventoryContainer?.setVisible(isVisible);
       if (isVisible) this.settingsContainer?.setVisible(false);
-      this.physics.world.isPaused = isVisible;
+      this.updatePauseState();
     }
 
     if (this.fullscreenKey && Phaser.Input.Keyboard.JustDown(this.fullscreenKey)) {
@@ -225,7 +227,7 @@ export class GameScene extends Phaser.Scene {
   }
 
   private handleResize(gameSize: Phaser.Structs.Size) {
-    this.cameras.resize(gameSize.width, gameSize.height);
+    void gameSize;
     this.layoutUi();
   }
 
@@ -243,5 +245,9 @@ export class GameScene extends Phaser.Scene {
     this.settingsText?.setText(
       'Settings\n\n[F] Toggle Fullscreen: ' + (this.scale.isFullscreen ? 'On' : 'Off') + '\n[H] Show FPS: ' + (this.isFpsVisible ? 'On' : 'Off') + '\n[Esc] Close Menu'
     );
+  }
+
+  private updatePauseState() {
+    this.physics.world.isPaused = Boolean(this.settingsContainer?.visible || this.inventoryContainer?.visible);
   }
 }
