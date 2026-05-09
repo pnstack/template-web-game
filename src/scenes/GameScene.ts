@@ -159,7 +159,6 @@ export class GameScene extends Phaser.Scene {
 
     if (this.fpsText && time - this.lastFpsUpdateTime >= FPS_UPDATE_INTERVAL_MS) {
       this.fpsText.setText(`FPS: ${Math.round(this.game.loop.actualFps)}`);
-      this.fpsText.setVisible(this.isFpsVisible);
       this.lastFpsUpdateTime = time;
     }
 
@@ -188,6 +187,7 @@ export class GameScene extends Phaser.Scene {
 
     if (this.fpsToggleKey && Phaser.Input.Keyboard.JustDown(this.fpsToggleKey)) {
       this.isFpsVisible = !this.isFpsVisible;
+      this.fpsText?.setVisible(this.isFpsVisible);
       this.updateSettingsText();
     }
 
@@ -228,7 +228,7 @@ export class GameScene extends Phaser.Scene {
     }
   }
 
-  private handleResize(_gameSize: Phaser.Structs.Size) {
+  private handleResize(_resizedGameSize: Phaser.Structs.Size) {
     this.layoutUi();
   }
 
