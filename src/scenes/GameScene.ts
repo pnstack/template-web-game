@@ -7,6 +7,18 @@ export class GameScene extends Phaser.Scene {
   private stars?: Phaser.Physics.Arcade.Group;
   private score = 0;
   private scoreText?: Phaser.GameObjects.Text;
+  private fpsText?: Phaser.GameObjects.Text;
+  private isFpsVisible = true;
+  private settingsContainer?: Phaser.GameObjects.Container;
+  private settingsPanel?: Phaser.GameObjects.Rectangle;
+  private settingsText?: Phaser.GameObjects.Text;
+  private inventoryContainer?: Phaser.GameObjects.Container;
+  private inventoryPanel?: Phaser.GameObjects.Rectangle;
+  private inventoryText?: Phaser.GameObjects.Text;
+  private menuKey?: Phaser.Input.Keyboard.Key;
+  private inventoryKey?: Phaser.Input.Keyboard.Key;
+  private fullscreenKey?: Phaser.Input.Keyboard.Key;
+  private fpsToggleKey?: Phaser.Input.Keyboard.Key;
 
   constructor() {
     super({ key: 'GameScene' });
@@ -89,20 +101,91 @@ export class GameScene extends Phaser.Scene {
     this.scoreText = this.add.text(16, 16, 'Score: 0', {
       fontSize: '24px',
       color: '#ffffff',
+    }).setDepth(10);
+
+    this.fpsText = this.add.text(0, 16, 'FPS: 0', {
+      fontSize: '20px',
+      color: '#9be7ff',
+      backgroundColor: '#000000aa',
+      padding: { x: 8, y: 4 },
+    }).setDepth(10);
+
+    this.settingsPanel = this.add.rectangle(0, 0, 380, 220, 0x000000, 0.85);
+    this.settingsText = this.add.text(0, 0, '', {
+      fontSize: '18px',
+      color: '#ffffff',
+      align: 'left',
+      lineSpacing: 8,
     });
+    this.settingsContainer = this.add.container(0, 0, [this.settingsPanel, this.settingsText]).setDepth(20).setVisible(false);
+
+    this.inventoryPanel = this.add.rectangle(0, 0, 380, 220, 0x000000, 0.85);
+    this.inventoryText = this.add.text(0, 0, 'Inventory\n\n[1] Sword\n[2] Shield\n[3] Potion x3\n[4] Empty\n[5] Empty', {
+      fontSize: '18px',
+      color: '#ffffff',
+      align: 'left',
+      lineSpacing: 8,
+    });
+    this.inventoryContainer = this.add.container(0, 0, [this.inventoryPanel, this.inventoryText]).setDepth(20).setVisible(false);
 
     // Controls
     this.cursors = this.input.keyboard?.createCursorKeys();
+    this.menuKey = this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+    this.inventoryKey = this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.I);
+    this.fullscreenKey = this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.F);
+    this.fpsToggleKey = this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.H);
 
     // Instructions
-    this.add.text(400, 100, 'Use Arrow Keys to Move', {
+    this.add.text(400, 100, 'Arrow Keys: Move | Esc: Settings | I: Inventory', {
       fontSize: '18px',
       color: '#ffffff',
     }).setOrigin(0.5);
+
+    this.layoutUi();
+    this.updateSettingsText();
+    this.scale.on('resize', this.handleResize, this);
   }
 
   update() {
     if (!this.player || !this.cursors) return;
+
+    if (this.fpsText) {
+      this.fpsText.setText(`FPS: ${Math.round(this.game.loop.actualFps)}`);
+      this.fpsText.setVisible(this.isFpsVisible);
+    }
+
+    if (this.menuKey && Phaser.Input.Keyboard.JustDown(this.menuKey)) {
+      const isVisible = !(this.settingsContainer?.visible ?? false);
+      this.settingsContainer?.setVisible(isVisible);
+      if (isVisible) this.inventoryContainer?.setVisible(false);
+      this.physics.world.isPaused = isVisible;
+    }
+
+    if (this.inventoryKey && Phaser.Input.Keyboard.JustDown(this.inventoryKey)) {
+      const isVisible = !(this.inventoryContainer?.visible ?? false);
+      this.inventoryContainer?.setVisible(isVisible);
+      if (isVisible) this.settingsContainer?.setVisible(false);
+      this.physics.world.isPaused = isVisible;
+    }
+
+    if (this.fullscreenKey && Phaser.Input.Keyboard.JustDown(this.fullscreenKey)) {
+      if (this.scale.isFullscreen) {
+        this.scale.stopFullscreen();
+      } else {
+        this.scale.startFullscreen();
+      }
+      this.updateSettingsText();
+    }
+
+    if (this.fpsToggleKey && Phaser.Input.Keyboard.JustDown(this.fpsToggleKey)) {
+      this.isFpsVisible = !this.isFpsVisible;
+      this.updateSettingsText();
+    }
+
+    if ((this.settingsContainer?.visible ?? false) || (this.inventoryContainer?.visible ?? false)) {
+      this.player.setVelocityX(0);
+      return;
+    }
 
     if (this.cursors.left.isDown) {
       this.player.setVelocityX(-160);
@@ -134,5 +217,26 @@ export class GameScene extends Phaser.Scene {
         return true;
       });
     }
+  }
+
+  private handleResize(gameSize: Phaser.Structs.Size) {
+    this.cameras.resize(gameSize.width, gameSize.height);
+    this.layoutUi();
+  }
+
+  private layoutUi() {
+    const width = this.scale.width;
+    const height = this.scale.height;
+    this.fpsText?.setPosition(width - 16, 16).setOrigin(1, 0);
+    this.settingsPanel?.setPosition(width / 2, height / 2);
+    this.settingsText?.setPosition(width / 2 - 165, height / 2 - 85);
+    this.inventoryPanel?.setPosition(width / 2, height / 2);
+    this.inventoryText?.setPosition(width / 2 - 165, height / 2 - 85);
+  }
+
+  private updateSettingsText() {
+    this.settingsText?.setText(
+      'Settings\n\n[F] Toggle Fullscreen: ' + (this.scale.isFullscreen ? 'On' : 'Off') + '\n[H] Show FPS: ' + (this.isFpsVisible ? 'On' : 'Off') + '\n[Esc] Close Menu'
+    );
   }
 }

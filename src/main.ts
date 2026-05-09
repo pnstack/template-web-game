@@ -4,10 +4,15 @@ import { PreloadScene } from './scenes/PreloadScene';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
+  width: window.innerWidth,
+  height: window.innerHeight,
   parent: 'game-container',
   backgroundColor: '#2d2d2d',
+  scale: {
+    mode: Phaser.Scale.RESIZE,
+    width: '100%',
+    height: '100%',
+  },
   physics: {
     default: 'arcade',
     arcade: {

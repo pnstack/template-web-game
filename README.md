@@ -9,6 +9,10 @@ Modern web game template built with Phaser 3, TypeScript, and Vite.
 - **Vite** - Fast build tool and dev server
 - **Clean Architecture** - Well-organized project structure
 - **CI/CD** - Automated deployment to GitHub Pages
+- **Fullscreen-first Template** - Game fills the viewport by default
+- **FPS Counter** - Real-time performance display overlay
+- **Settings Menu** - In-game settings panel (Esc)
+- **Inventory UI** - In-game inventory panel (I)
 
 ## 📁 Project Structure
 
