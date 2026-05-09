@@ -162,14 +162,14 @@ export class GameScene extends Phaser.Scene {
     }
 
     if (this.menuKey && Phaser.Input.Keyboard.JustDown(this.menuKey)) {
-      const isVisible = !(this.settingsContainer?.visible ?? false);
+      const isVisible = !this.settingsContainer?.visible;
       this.settingsContainer?.setVisible(isVisible);
       if (isVisible) this.inventoryContainer?.setVisible(false);
       this.updatePauseState();
     }
 
     if (this.inventoryKey && Phaser.Input.Keyboard.JustDown(this.inventoryKey)) {
-      const isVisible = !(this.inventoryContainer?.visible ?? false);
+      const isVisible = !this.inventoryContainer?.visible;
       this.inventoryContainer?.setVisible(isVisible);
       if (isVisible) this.settingsContainer?.setVisible(false);
       this.updatePauseState();
@@ -189,7 +189,7 @@ export class GameScene extends Phaser.Scene {
       this.updateSettingsText();
     }
 
-    if ((this.settingsContainer?.visible ?? false) || (this.inventoryContainer?.visible ?? false)) {
+    if (this.isAnyOverlayVisible()) {
       this.player.setVelocityX(0);
       return;
     }
@@ -249,6 +249,10 @@ export class GameScene extends Phaser.Scene {
   }
 
   private updatePauseState() {
-    this.physics.world.isPaused = Boolean(this.settingsContainer?.visible || this.inventoryContainer?.visible);
+    this.physics.world.isPaused = this.isAnyOverlayVisible();
+  }
+
+  private isAnyOverlayVisible() {
+    return Boolean(this.settingsContainer?.visible || this.inventoryContainer?.visible);
   }
 }
